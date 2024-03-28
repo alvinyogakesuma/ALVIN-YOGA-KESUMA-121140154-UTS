@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/batasadministrasikecamatan_1.js"></script>
+        <script src="data/Merged_2.js"></script>
+        <script src="data/pendidikan_3.js"></script>
+        <script src="data/pemerintahan_4.js"></script>
+        <script src="data/niaga_5.js"></script>
+        <script src="data/faskesrumahsakit_6.js"></script>
+        <script src="data/faskespuskesmas_7.js"></script>
+        <script src="data/faskeslab_8.js"></script>
+        <script src="data/faskesklinik_9.js"></script>
+        <script src="data/apotek_10.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-6.387754147981536,106.66807757598406],[-6.10228165102259,106.97384432628132]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_batasadministrasikecamatan_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wadmkc</th>\
+                        <td class="visible-with-data" id="wadmkc">' + (feature.properties['wadmkc'] !== null ? autolinker.link(feature.properties['wadmkc'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wadmkk</th>\
+                        <td class="visible-with-data" id="wadmkk">' + (feature.properties['wadmkk'] !== null ? autolinker.link(feature.properties['wadmkk'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">shape_leng</th>\
+                        <td class="visible-with-data" id="shape_leng">' + (feature.properties['shape_leng'] !== null ? autolinker.link(feature.properties['shape_leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">shape_area</th>\
+                        <td class="visible-with-data" id="shape_area">' + (feature.properties['shape_area'] !== null ? autolinker.link(feature.properties['shape_area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_batasadministrasikecamatan_1_0(feature) {
+            switch(String(feature.properties['wadmkk'])) {
+                case 'JAKARTA BARAT':
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'JAKARTA PUSAT':
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,124,74,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'JAKARTA SELATAN':
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,201,128,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'JAKARTA TIMUR':
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'JAKARTA UTARA':
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(199,232,173,0.5)',
+                interactive: true,
+            }
+                    break;
+                case 'KAB.ADM.KEP.SERIBU':
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,191,171,0.5)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_batasadministrasikecamatan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,0.5)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,0.5)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_batasadministrasikecamatan_1');
+        map.getPane('pane_batasadministrasikecamatan_1').style.zIndex = 401;
+        map.getPane('pane_batasadministrasikecamatan_1').style['mix-blend-mode'] = 'normal';
+        var layer_batasadministrasikecamatan_1 = new L.geoJson(json_batasadministrasikecamatan_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_batasadministrasikecamatan_1',
+            layerName: 'layer_batasadministrasikecamatan_1',
+            pane: 'pane_batasadministrasikecamatan_1',
+            onEachFeature: pop_batasadministrasikecamatan_1,
+            style: style_batasadministrasikecamatan_1_0,
+        });
+        bounds_group.addLayer(layer_batasadministrasikecamatan_1);
+        map.addLayer(layer_batasadministrasikecamatan_1);
+        function pop_Merged_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['gid'] !== null ? autolinker.link(feature.properties['gid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['namrjl'] !== null ? autolinker.link(feature.properties['namrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['konrjl'] !== null ? autolinker.link(feature.properties['konrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['matrjl'] !== null ? autolinker.link(feature.properties['matrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fgsrjl'] !== null ? autolinker.link(feature.properties['fgsrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['utkrjl'] !== null ? autolinker.link(feature.properties['utkrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['tolrjl'] !== null ? autolinker.link(feature.properties['tolrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['wlyrjl'] !== null ? autolinker.link(feature.properties['wlyrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['autrjl'] !== null ? autolinker.link(feature.properties['autrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['klsrjl'] !== null ? autolinker.link(feature.properties['klsrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['spcrjl'] !== null ? autolinker.link(feature.properties['spcrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['jparjl'] !== null ? autolinker.link(feature.properties['jparjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['arhrjl'] !== null ? autolinker.link(feature.properties['arhrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['starjl'] !== null ? autolinker.link(feature.properties['starjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['kllrjl'] !== null ? autolinker.link(feature.properties['kllrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['medrjl'] !== null ? autolinker.link(feature.properties['medrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['locrjl'] !== null ? autolinker.link(feature.properties['locrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['jarrjl'] !== null ? autolinker.link(feature.properties['jarrjl'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fcode'] !== null ? autolinker.link(feature.properties['fcode'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['srs_id'] !== null ? autolinker.link(feature.properties['srs_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['lcode'] !== null ? autolinker.link(feature.properties['lcode'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['metadata'] !== null ? autolinker.link(feature.properties['metadata'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['shape_leng'] !== null ? autolinker.link(feature.properties['shape_leng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(feature.properties['layer'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(feature.properties['path'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_Merged_2_0() {
+            return {
+                pane: 'pane_Merged_2',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Merged_2');
+        map.getPane('pane_Merged_2').style.zIndex = 402;
+        map.getPane('pane_Merged_2').style['mix-blend-mode'] = 'normal';
+        var layer_Merged_2 = new L.geoJson(json_Merged_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Merged_2',
+            layerName: 'layer_Merged_2',
+            pane: 'pane_Merged_2',
+            onEachFeature: pop_Merged_2,
+            style: style_Merged_2_0,
+        });
+        bounds_group.addLayer(layer_Merged_2);
+        map.addLayer(layer_Merged_2);
+        function pop_pendidikan_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_pendidikan_3_0() {
+            return {
+                pane: 'pane_pendidikan_3',
+                shape: 'triangle',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(50,87,128,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(72,123,182,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_pendidikan_3');
+        map.getPane('pane_pendidikan_3').style.zIndex = 403;
+        map.getPane('pane_pendidikan_3').style['mix-blend-mode'] = 'normal';
+        var layer_pendidikan_3 = new L.geoJson(json_pendidikan_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_pendidikan_3',
+            layerName: 'layer_pendidikan_3',
+            pane: 'pane_pendidikan_3',
+            onEachFeature: pop_pendidikan_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_pendidikan_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_pendidikan_3);
+        map.addLayer(layer_pendidikan_3);
+        function pop_pemerintahan_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_pemerintahan_4_0() {
+            return {
+                pane: 'pane_pemerintahan_4',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(247,247,247,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(83,83,83,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_pemerintahan_4');
+        map.getPane('pane_pemerintahan_4').style.zIndex = 404;
+        map.getPane('pane_pemerintahan_4').style['mix-blend-mode'] = 'normal';
+        var layer_pemerintahan_4 = new L.geoJson(json_pemerintahan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_pemerintahan_4',
+            layerName: 'layer_pemerintahan_4',
+            pane: 'pane_pemerintahan_4',
+            onEachFeature: pop_pemerintahan_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_pemerintahan_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_pemerintahan_4);
+        map.addLayer(layer_pemerintahan_4);
+        function pop_niaga_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_niaga_5_0() {
+            return {
+                pane: 'pane_niaga_5',
+                shape: 'diamond',
+                radius: 8.8,
+                opacity: 1,
+                color: 'rgba(61,128,53,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(84,176,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_niaga_5');
+        map.getPane('pane_niaga_5').style.zIndex = 405;
+        map.getPane('pane_niaga_5').style['mix-blend-mode'] = 'normal';
+        var layer_niaga_5 = new L.geoJson(json_niaga_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_niaga_5',
+            layerName: 'layer_niaga_5',
+            pane: 'pane_niaga_5',
+            onEachFeature: pop_niaga_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_niaga_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_niaga_5);
+        map.addLayer(layer_niaga_5);
+        function pop_faskesrumahsakit_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_faskesrumahsakit_6_0() {
+            return {
+                pane: 'pane_faskesrumahsakit_6',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,30,42,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_faskesrumahsakit_6');
+        map.getPane('pane_faskesrumahsakit_6').style.zIndex = 406;
+        map.getPane('pane_faskesrumahsakit_6').style['mix-blend-mode'] = 'normal';
+        var layer_faskesrumahsakit_6 = new L.geoJson(json_faskesrumahsakit_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_faskesrumahsakit_6',
+            layerName: 'layer_faskesrumahsakit_6',
+            pane: 'pane_faskesrumahsakit_6',
+            onEachFeature: pop_faskesrumahsakit_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_faskesrumahsakit_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_faskesrumahsakit_6);
+        map.addLayer(layer_faskesrumahsakit_6);
+        function pop_faskespuskesmas_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_faskespuskesmas_7_0() {
+            return {
+                pane: 'pane_faskespuskesmas_7',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,30,42,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_faskespuskesmas_7');
+        map.getPane('pane_faskespuskesmas_7').style.zIndex = 407;
+        map.getPane('pane_faskespuskesmas_7').style['mix-blend-mode'] = 'normal';
+        var layer_faskespuskesmas_7 = new L.geoJson(json_faskespuskesmas_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_faskespuskesmas_7',
+            layerName: 'layer_faskespuskesmas_7',
+            pane: 'pane_faskespuskesmas_7',
+            onEachFeature: pop_faskespuskesmas_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_faskespuskesmas_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_faskespuskesmas_7);
+        map.addLayer(layer_faskespuskesmas_7);
+        function pop_faskeslab_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_faskeslab_8_0() {
+            return {
+                pane: 'pane_faskeslab_8',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,30,42,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_faskeslab_8');
+        map.getPane('pane_faskeslab_8').style.zIndex = 408;
+        map.getPane('pane_faskeslab_8').style['mix-blend-mode'] = 'normal';
+        var layer_faskeslab_8 = new L.geoJson(json_faskeslab_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_faskeslab_8',
+            layerName: 'layer_faskeslab_8',
+            pane: 'pane_faskeslab_8',
+            onEachFeature: pop_faskeslab_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_faskeslab_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_faskeslab_8);
+        map.addLayer(layer_faskeslab_8);
+        function pop_faskesklinik_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_faskesklinik_9_0() {
+            return {
+                pane: 'pane_faskesklinik_9',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(128,17,25,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,30,42,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_faskesklinik_9');
+        map.getPane('pane_faskesklinik_9').style.zIndex = 409;
+        map.getPane('pane_faskesklinik_9').style['mix-blend-mode'] = 'normal';
+        var layer_faskesklinik_9 = new L.geoJson(json_faskesklinik_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_faskesklinik_9',
+            layerName: 'layer_faskesklinik_9',
+            pane: 'pane_faskesklinik_9',
+            onEachFeature: pop_faskesklinik_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_faskesklinik_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_faskesklinik_9);
+        map.addLayer(layer_faskesklinik_9);
+        function pop_apotek_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">objectid</th>\
+                        <td class="visible-with-data" id="objectid">' + (feature.properties['objectid'] !== null ? autolinker.link(feature.properties['objectid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">namobj</th>\
+                        <td class="visible-with-data" id="namobj">' + (feature.properties['namobj'] !== null ? autolinker.link(feature.properties['namobj'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">remark</th>\
+                        <td class="visible-with-data" id="remark">' + (feature.properties['remark'] !== null ? autolinker.link(feature.properties['remark'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_apotek_10_0() {
+            return {
+                pane: 'pane_apotek_10',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(50,87,128,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(72,123,182,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_apotek_10');
+        map.getPane('pane_apotek_10').style.zIndex = 410;
+        map.getPane('pane_apotek_10').style['mix-blend-mode'] = 'normal';
+        var layer_apotek_10 = new L.geoJson(json_apotek_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_apotek_10',
+            layerName: 'layer_apotek_10',
+            pane: 'pane_apotek_10',
+            onEachFeature: pop_apotek_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_apotek_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_apotek_10);
+        map.addLayer(layer_apotek_10);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/apotek_10.png" /> apotek': layer_apotek_10,'<img src="legend/faskesklinik_9.png" /> faskes-klinik': layer_faskesklinik_9,'<img src="legend/faskeslab_8.png" /> faskes-lab': layer_faskeslab_8,'<img src="legend/faskespuskesmas_7.png" /> faskes-puskesmas': layer_faskespuskesmas_7,'<img src="legend/faskesrumahsakit_6.png" /> faskes-rumahsakit': layer_faskesrumahsakit_6,'<img src="legend/niaga_5.png" /> niaga': layer_niaga_5,'<img src="legend/pemerintahan_4.png" /> pemerintahan': layer_pemerintahan_4,'<img src="legend/pendidikan_3.png" /> pendidikan': layer_pendidikan_3,'<img src="legend/Merged_2.png" /> Merged': layer_Merged_2,'batas-administrasi-kecamatan<br /><table><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_JAKARTABARAT0.png" /></td><td>JAKARTA BARAT</td></tr><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_JAKARTAPUSAT1.png" /></td><td>JAKARTA PUSAT</td></tr><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_JAKARTASELATAN2.png" /></td><td>JAKARTA SELATAN</td></tr><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_JAKARTATIMUR3.png" /></td><td>JAKARTA TIMUR</td></tr><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_JAKARTAUTARA4.png" /></td><td>JAKARTA UTARA</td></tr><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_KABADMKEPSERIBU5.png" /></td><td>KAB.ADM.KEP.SERIBU</td></tr><tr><td style="text-align: center;"><img src="legend/batasadministrasikecamatan_1_6.png" /></td><td></td></tr></table>': layer_batasadministrasikecamatan_1,"OSM Standard": layer_OSMStandard_0,}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
